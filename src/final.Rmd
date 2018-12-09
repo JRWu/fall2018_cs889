@@ -1,0 +1,80 @@
+---
+title: "CS889 - To Clack or Not to Clack: An Investigation of Audio-Tactile cues for Typing Efficiency"
+author: "Jia Wu (jr2wu)"
+output: html_document
+---
+
+```
+# Install packages.
+install.packages("ez")
+install.packages("dplyr")
+install.packages("reshape")
+install.packages("knitr")
+install.packages("rcompanion")
+```
+
+```{r warning=FALSE, message=FALSE}
+# Load the libraries
+library(ez)
+library(dplyr)
+library(reshape)
+library(knitr)
+library(rcompanion)
+
+# Load the data
+data.dir <- "../data/unzipped"
+file.name <- "summarized_data.csv"
+
+file <- paste(data.dir,file.name,sep="/")
+data <- read.csv(file)
+
+# Clean the Data
+data$X <- NULL
+data$ID <- as.integer(data$ID) #TODO" Convert the participants to a numeric value
+```
+
+First we must examine the data. We examine the normality of each data distribution for **WPM** first.
+
+```{r}
+audiotactile <- data[which(data$CONDITION == 1),]  
+onlytactile <- data[which(data$CONDITION == 2),]
+
+st.audiotactile <- shapiro.test(audiotactile$WPM)
+st.onlytactile <- shapiro.test(onlytactile$WPM)
+
+par(mfrow=c(1,2))
+plotNormalHistogram(audiotactile$WPM, main="Audio Tactile")
+plotNormalHistogram(onlytactile$WPM, main="Tactile")
+```	
+
+Upon first glance, it appears as though the data is normally distributed. However, p-values for shapiro.tests on the distributions are significant, indicating that the **data may not be normal**. The p-values for audio tactile and tactile are as follows: `r format(st.audiotactile$p.value,scientific=FALSE)` and `r format(st.onlytactile$p.value,scientific=FALSE)`.
+
+By digging into the histograms further, we can see that the values are potentially **multimodal**. 
+
+```{r}
+par(mfrow=c(1,2))
+hist(audiotactile$WPM, main="Audio Tactile", breaks=50)
+hist(onlytactile$WPM, main="Tactile", breaks=50)
+```	
+
+This potential multimodal distribution can be likely attributed to the low sample size (n = `r length(unique(data$ID))`). With more samples, we could expect to see a more normal distribution. Nevertheless, we attempt to apply some transformations to see if we can normalize the data and apply parametric stats. 
+
+
+We attempt the following transformations: **Square Root**, **Cube Root**, and **Log**. 
+```{r}
+# Square Root
+st.at.sqrt <- shapiro.test(sqrt(audiotactile$WPM))
+st.tt.sqrt <- shapiro.test(sqrt(onlytactile$WPM))
+
+# Cube Root
+
+st.at.cube <- shapiro.test(sign(audiotactile$WPM) * abs(audiotactile$WPM)^(1/3))
+st.tt.cube <- shapiro.test(sign(onlytactile$WPM) * abs(onlytactile$WPM)^(1/3))
+
+# Log
+st.at.log <- shapiro.test(log(audiotactile$WPM))
+st.tt.log <- shapiro.test(log(onlytactile$WPM))
+
+```
+
+

@@ -1,0 +1,132 @@
+---
+title: "CS889 - Pilot Study"
+author: "Jia Wu (jr2wu)"
+output: html_document
+---
+
+```{r}
+# Load the data
+jia.t.f <- paste(data.dir,part.dir,"1542579290534-iju9_jia_tactile_1_1_1_metrics.tsv", sep="/")
+jia.a.f <- paste(data.dir,part.dir,"1542579450269-0emq_jia_audio_tactile_2_1_1_metrics.tsv", sep="/")
+
+shn.t.f <- paste(data.dir,part.dir,"1542657530359-j2va_shenheng_tactile_1_1_1_metrics.tsv", sep="/")
+shn.a.f <- paste(data.dir,part.dir,"1542658394422-iij9_shenheng_audiotactile_2_2_1_metrics.tsv", sep="/")
+
+lin.t.f <- paste(data.dir,part.dir,"1542658945915-y89p_lin_tactile_2_2_1_metrics.tsv", sep="/")
+lin.a.f <- paste(data.dir,part.dir,"1542658114114-bvki_lin_audiotactile_1_1_1_metrics.tsv", sep="/")
+
+joh.t.f <- paste(data.dir,part.dir,"1542659202544-af26_johra_tactile_2_2_1_metrics.tsv", sep="/")
+joh.a.f <- paste(data.dir,part.dir,"1542659731200-gm4n_johra_audiotactile_2_2_1_metrics.tsv", sep="/")
+
+
+# Read the Data
+# Tactile Only
+jw.t <- read.table(jia.t.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+sg.t <- read.table(shn.t.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+lw.t <- read.table(lin.t.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+jm.t <- read.table(joh.t.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+
+
+# Audio Tactile Only
+jw.a <- read.table(jia.a.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+sg.a <- read.table(shn.a.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+lw.a <- read.table(lin.a.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+jm.a <- read.table(joh.a.f, sep="\t", fileEncoding="UTF-16LE", stringsAsFactors=FALSE)
+
+colnames(jw.a) <- jw.a[1,]
+cnames <- unique(as.matrix(unlist(jw.a[1,])))
+colnames(jw.a) <- cnames
+jw.a <- jw.a[-1,]
+
+colnames(sg.a) <- sg.a[1,]
+cnames <- unique(as.matrix(unlist(sg.a[1,])))
+colnames(sg.a) <- cnames
+sg.a <- sg.a[-1,]
+
+colnames(lw.a) <- lw.a[1,]
+cnames <- unique(as.matrix(unlist(lw.a[1,])))
+colnames(lw.a) <- cnames
+lw.a <- lw.a[-1,]
+
+colnames(jm.a) <- jm.a[1,]
+cnames <- unique(as.matrix(unlist(jm.a[1,])))
+colnames(jm.a) <- cnames
+jm.a <- jm.a[-1,]
+
+##
+
+colnames(jw.t) <- jw.t[1,]
+cnames <- unique(as.matrix(unlist(jw.t[1,])))
+colnames(jw.t) <- cnames
+jw.t <- jw.t[-1,]
+
+colnames(sg.t) <- sg.t[1,]
+cnames <- unique(as.matrix(unlist(sg.t[1,])))
+colnames(sg.t) <- cnames
+sg.t <- sg.t[-1,]
+
+colnames(lw.t) <- lw.t[1,]
+cnames <- unique(as.matrix(unlist(lw.t[1,])))
+colnames(lw.t) <- cnames
+lw.t <- lw.t[-1,]
+
+colnames(jm.t) <- jm.t[1,]
+cnames <- unique(as.matrix(unlist(jm.t[1,])))
+colnames(jm.t) <- cnames
+jm.t <- jm.t[-1,]
+
+for (i in 1:nrow(jw.t))
+{
+	jw.t[i,] <- as.character(unlist(jw.t[i,]))
+	sg.t[i,] <- as.character(unlist(jw.t[i,]))
+	lw.t[i,] <- as.character(unlist(jw.t[i,]))
+	jm.t[i,] <- as.character(unlist(jw.t[i,]))
+
+	jw.a[i,] <- as.character(unlist(jw.a[i,]))
+	sg.a[i,] <- as.character(unlist(jw.a[i,]))
+	lw.a[i,] <- as.character(unlist(jw.a[i,]))
+	jm.a[i,] <- as.character(unlist(jw.a[i,]))
+}
+
+wpm.t <- c(as.numeric(jw.t$WPM),as.numeric(sg.t$WPM),as.numeric(lw.t$WPM),as.numeric(jm.t$WPM))
+wpm.a <- c(as.numeric(jw.a$WPM),as.numeric(sg.a$WPM),as.numeric(lw.a$WPM),as.numeric(jm.a$WPM))
+
+ter.t <-c(as.numeric(jw.t$TOTAL_ERROR_RATE),as.numeric(sg.t$TOTAL_ERROR_RATE),as.numeric(lw.t$TOTAL_ERROR_RATE),as.numeric(jm.t$TOTAL_ERROR_RATE))
+ter.a <- c(as.numeric(jw.a$TOTAL_ERROR_RATE),as.numeric(sg.a$TOTAL_ERROR_RATE),as.numeric(lw.a$TOTAL_ERROR_RATE),as.numeric(jm.a$TOTAL_ERROR_RATE))
+
+
+
+```
+
+Avg Time for Tactile is: `r mean(wpm.t)` Seconds.
+
+Avg Errors for Tactile is: `r mean(ter.t)`
+
+Avg Time for Audio Tactile is: `r mean(wpm.a)` Seconds.
+
+Avg Errors for Audio Tactile is: `r mean(ter.a)`
+
+
+```{r}
+# Plot the Preliminary Data
+
+plot(seq(1,length(wpm.t)), as.numeric(wpm.t),
+	main="WPM vs Trial",
+	ylab="WPM",
+	xlab="Trial",
+	ylim=c(0,max(as.numeric(c(wpm.t,wpm.a)))),
+	pch=19,
+	col=c(rgb(0,0,1,0.5))
+)
+points(seq(1,length(wpm.a)), as.numeric(wpm.a),pch=19,col=c(rgb(1,0,0,0.5)))
+
+abline(mean(wpm.t), col=c(rgb(0,0,1,0.5)),0)
+abline(mean(wpm.a), col=c(rgb(1,0,0,0.5)),0)
+
+# Plot the densities of Each
+plot(density(as.numeric(wpm.t)),col="blue") # Density Plot
+lines(density(as.numeric(wpm.a)),col="red") # Density Plot
+
+# Boxplot of Two
+boxplot(wpm.a,wpm.t, ylim=c(0,max(c(wpm.a,wpm.t))),col=c(rgb(1,0,0,0.5),rgb(0,0,1,0.5)))
+```
